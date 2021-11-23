@@ -1,11 +1,18 @@
 <?php get_header(); ?>
 <body <?php body_class(array("first","second","third")); ?>>
     <?php get_template_part('/template-parts/common/hero'); ?>
-    <div class="posts">
+    <div class="posts text-center">
+        <h1>
+            posts under <?php single_cat_title(); ?>
+        </h1>
         <?php 
         while(have_posts()) {
             the_post();
-         get_template_part("post-formats/content",get_post_format());   
+         ?>
+         <h2>
+             <a href="<?php get_the_permalink();?>"><?php the_title();?></a>
+         </h2>
+         <?php    
         }
         ?> 
         <div class="container post-pagination">

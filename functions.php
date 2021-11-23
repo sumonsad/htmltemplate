@@ -10,6 +10,7 @@ function htmltemplate_bootstrapping(){
     add_theme_support("post-thumbnails");
     add_theme_support("title-tag");
     add_theme_support("custom-background");
+    
     $htmltemplate_custom_header_details=array(
         'header-text' =>true,
         'default-text-color'=>'#222',
@@ -19,14 +20,17 @@ function htmltemplate_bootstrapping(){
         "width" =>100,
         "height" =>100
         ));
+    add_theme_support("post-formats",array("image","quote","video","audio"));
     register_nav_menu('primary_menu',__('Main Menu','htmltemplate'));
 }
     add_action("after_setup_theme", "htmltemplate_bootstrapping");
 
     function htmltemplate_assets(){
-        wp_enqueue_style("htmltemplate",get_stylesheet_uri(),null,VERSION);
         wp_enqueue_style("bootstrap-min","//cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css");
         wp_enqueue_style("featherlight-min","//cdn.jsdelivr.net/npm/featherlight@1.7.14/release/featherlight.min.css");
+        wp_enqueue_style("dashicons");
+        wp_enqueue_style("htmltemplate",get_stylesheet_uri(),null,VERSION);
+        
         wp_enqueue_script("fontawesome","//kit.fontawesome.com/476a55ebf9.js");
         wp_enqueue_script("featherlight-js","//cdn.jsdelivr.net/npm/featherlight@1.7.14/release/featherlight.min.js",array("jquery"),"1.0.0",true);
         wp_enqueue_script("htmltemplate-main",get_template_directory_uri()."/assets/js/main.js",null,"0.1.1",true);
@@ -119,9 +123,57 @@ function htmltemplate_about_page_template_banner(){
                 }
             </style>
           <?php
-      }
+      } 
   }
 }
 
 add_action('wp_head','htmltemplate_about_page_template_banner');
+
+function htmltemplate_body_class($classes){
+ unset($classes[array_search("custom-background",$classes)]);
+ $classes[] = 'first-class';
+ $classes[] = 'second-class';
+ return $classes;
+}
+
+add_filter('body_class','htmltemplate_body_class');
+
+function htmltemplate_testimonials_attachments($attachments){
+    $fileds = array(
+        array(
+            'name' => 'name',
+            'type' => 'text',
+            'label' => __( 'Name', 'htmltemplate'),
+        ),
+        array(
+            'name' => 'position',
+            'type' => 'text',
+            'label' => __( 'Position', 'htmltemplate'),
+        ),
+        array(
+            'name' => 'company',
+            'type' => 'text',
+            'label' => __( 'Company', 'htmltemplate'),
+        ),
+        array(
+            'name' => 'testimonial',
+            'type' => 'textarea',
+            'label' => __( 'Testimonial', 'htmltemplate'),
+        ),
+    );
+    $args = array(
+            'label' =>'Testimonial',
+            'post_type' => array('page'),
+            'filetype' => array("image"),
+            'note' => 'Add testimonial',
+            'button_text' => __('Attach Files', 'htmltemplate'),
+            'fields' => $fileds,
+    );
+    $attachments->register( 'testimonials', $args);
+}
+
+add_action('attachments_register','htmltemplate_testimonials_attachments');
+
+
+
 ?>
